@@ -6,12 +6,14 @@ import { firebase } from "./firebase.js";
 const app = express();
 
 app.use(bodyParser.json());
-app.get("/", (req, res) =>
-  res.json({
+app.get("/", (req, res) => {
+  const resBody = {
     ok: new Date().toISOString(),
     firebase: firebase.options.projectId,
-  })
-);
+  };
+  console.debug("GET: /, ", resBody);
+  res.json(resBody);
+});
 app.post("/token", async (req, res) => {
   console.debug("Generate token for", req.body);
   try {

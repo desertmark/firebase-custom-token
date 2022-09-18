@@ -4,7 +4,8 @@
   "description": "Small API to generate custom token to do firebase authentication integration with Azure active directory in react-native apps.",
   "main": "index.ts",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "logs": "az webapp log tail --name food-run --resource-group food-run-rg"
   },
   "repository": {
     "type": "git",
