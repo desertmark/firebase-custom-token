@@ -4,9 +4,18 @@ import { config } from "./configs.js";
 export const firebase = firebaseAdmin.initializeApp(config.firebaseConfig);
 console.log("Firebase initialized, Project is: ", firebase.options.projectId);
 
+export const getUserByEmail = async (userInfo) => {
+  try {
+    return await firebase.auth().getUserByEmail(userInfo.mail);
+  } catch (error) {
+    // Failes when the error is not found. So continue to error creation.
+    return;
+  }
+};
+
 export const createIfNotExists = async (userInfo) => {
   try {
-    const user = await firebase.auth().getUserByEmail(userInfo.mail);
+    const user = await getUserByEmail(userInfo);
     if (!user) {
       console.debug("Creating user", userInfo.mail);
       // Create if not exists
