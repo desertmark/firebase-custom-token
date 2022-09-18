@@ -27,8 +27,8 @@ app.post("/token", async (req, res) => {
     const token = await loginToFirebase(userInfo);
     res.json({ token });
   } catch (error) {
-    console.log("Failed to generate firebase token", { error, body: req.body });
-    res.json({ error });
+    console.log("Failed to generate firebase token", { error });
+    res.json({ error: error.message });
   }
 });
 
