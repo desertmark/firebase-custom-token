@@ -2,7 +2,8 @@ import "dotenv/config";
 import express from "express";
 import { config } from "./configs.js";
 import bodyParser from "body-parser";
-import { firebase } from "./firebase.js";
+import { createIfNotExists, firebase, loginToFirebase } from "./firebase.js";
+import { validateToken } from "./azure.js";
 const app = express();
 
 app.use(bodyParser.json());
@@ -11,26 +12,19 @@ app.get("/", (req, res) => {
     ok: new Date().toISOString(),
     firebase: firebase.options.projectId,
   };
-  console.debug("GET: /, ", resBody);
+  console.debug("GET: / ", resBody);
   res.json(resBody);
 });
 app.post("/token", async (req, res) => {
-  console.debug("Generate token for", req.body);
   try {
-    let user;
-    try {
-      user = await firebase.auth().getUserByEmail(req.body.claims.email);
-    } catch (error) {}
-    if (!user) {
-      await firebase.auth().createUser({
-        displayName: req.body.claims.displayName,
-        email: req.body.claims.email,
-        uid: req.body.uid,
-      });
-    }
-    const token = await firebase
-      .auth()
-      .createCustomToken(req.body.uid, req.body.claims);
+    // Validate azure access token;
+    const accessToken = req.headers?.authorization?.split(" ")?.[1];
+    const userInfo = await validateToken(accessToken);
+    console.info("Generating token for: ", userInfo);
+    // create the user if it's new
+    await createIfNotExists(userInfo);
+    // Authenticate with firebase
+    const token = await loginToFirebase(userInfo);
     res.json({ token });
   } catch (error) {
     console.log("Failed to generate firebase token", { error, body: req.body });
