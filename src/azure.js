@@ -38,6 +38,7 @@ export const validateToken = async (accessToken) => {
     console.debug("Valid access token for", res.data);
     return res.data;
   } catch (error) {
+    console.debug(error);
     console.error("Failed to validate access token", {
       error: error?.response?.data?.error,
       code: error?.status,
