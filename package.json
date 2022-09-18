@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/desertmark/firebase-custom-token.git"
   },
-  "author": "Fernando Asulay <fernando.asulay@gmail.com",
+  "author": "Fernando Asulay <fernando.asulay@gmail.com>",
   "type": "module",
   "license": "ISC",
   "bugs": {
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/desertmark/firebase-custom-token#readme",
   "dependencies": {
+    "axios": "^0.27.2",
     "body-parser": "^1.20.0",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",

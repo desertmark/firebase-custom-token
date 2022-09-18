@@ -1,6 +1,11 @@
 import firebaseAdmin from "firebase-admin";
-const { PORT, FIREBASE_API_KEY, FIREBASE_BASE_64_SERVICE_ACCOUNT } =
-  process.env;
+const {
+  PORT,
+  FIREBASE_API_KEY,
+  FIREBASE_BASE_64_SERVICE_ACCOUNT,
+  AUTH_CLIENT_ID,
+  AUTH_URL,
+} = process.env;
 const getServiceAccount = () => {
   try {
     const serviceAccount = JSON.parse(
@@ -24,5 +29,9 @@ export const config = {
     appId: "1:475476904888:web:fceffb5d327f675e38dd4d",
     measurementId: "G-GZGSXF7BLS",
     credential: firebaseAdmin.credential.cert(getServiceAccount()),
+  },
+  azureConfig: {
+    clientId: AUTH_CLIENT_ID,
+    authUrl: AUTH_URL,
   },
 };
