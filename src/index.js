@@ -2,7 +2,11 @@ import "dotenv/config";
 import express from "express";
 import { config } from "./configs.js";
 import bodyParser from "body-parser";
-import { createIfNotExists, firebase, loginToFirebase } from "./firebase.js";
+import {
+  getOrCreateIfNotExists,
+  firebase,
+  loginToFirebase,
+} from "./firebase.js";
 import { validateToken } from "./azure.js";
 const app = express();
 
@@ -22,9 +26,9 @@ app.post("/token", async (req, res) => {
     const userInfo = await validateToken(accessToken);
     console.info("Generating token for: ", userInfo);
     // create the user if it's new
-    await createIfNotExists(userInfo);
+    const firebaseUserRecord = await getOrCreateIfNotExists(userInfo);
     // Authenticate with firebase
-    const token = await loginToFirebase(userInfo);
+    const token = await loginToFirebase(firebaseUserRecord);
     res.json({ token });
   } catch (error) {
     console.log("Failed to generate firebase token", { error });
