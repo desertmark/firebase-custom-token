@@ -1,5 +1,6 @@
 import { config } from "./configs.js";
 import axios from "axios";
+import jwt from "jsonwebtoken";
 const azureClient = axios.create({
   baseURL: config.azureConfig.authUrl,
 });
@@ -38,12 +39,29 @@ export const validateToken = async (accessToken) => {
     console.debug("Valid access token for", res.data);
     return res.data;
   } catch (error) {
-    console.debug(error);
     console.error("Failed to validate access token", {
       error: error?.response?.data?.error,
       code: error?.status,
       statusText: error?.statusText,
     });
-    throw Error("Failed to validate access token");
+    throw new Error("Failed to validate access token");
   }
+};
+/**
+ * Validates if the user is comming from the active directory that is configure.
+ * If common is set as tenant all active directory are valid.
+ * @param {string} accessToken Active Directory accessToken of the user loggin in.
+ */
+export const validateTenant = (accessToken) => {
+  const tenantId = config?.azureConfig?.tenantId;
+  const payload = jwt.decode(accessToken);
+  if (tenantId && tenantId !== "common") {
+    if (payload?.tid !== tenantId) {
+      const error = `User ${payload?.name} with id ${payload?.sub} does not belong to the configure tenantId.`;
+      console.log("Failed to validate tenant. ", error);
+      throw new Error(error);
+    }
+  }
+
+  console.debug(`Valid tenant for ${payload?.name}`);
 };

@@ -7,7 +7,7 @@ import {
   firebase,
   loginToFirebase,
 } from "./firebase.js";
-import { validateToken } from "./azure.js";
+import { validateTenant, validateToken } from "./azure.js";
 const app = express();
 
 app.use(bodyParser.json());
@@ -23,7 +23,13 @@ app.post("/token", async (req, res) => {
   try {
     // Validate azure access token;
     const accessToken = req.headers?.authorization?.split(" ")?.[1];
-    const userInfo = await validateToken(accessToken);
+    let userInfo;
+    try {
+      userInfo = await validateToken(accessToken);
+      validateTenant(accessToken);
+    } catch (error) {
+      return res.status(401).send({ error: error?.message || "Unauthrozied" });
+    }
     console.info("Generating token for: ", userInfo);
     // create the user if it's new
     const firebaseUserRecord = await getOrCreateIfNotExists(userInfo);
@@ -32,7 +38,7 @@ app.post("/token", async (req, res) => {
     res.json({ token });
   } catch (error) {
     console.log("Failed to generate firebase token", { error });
-    res.json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 

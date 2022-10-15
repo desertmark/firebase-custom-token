@@ -5,6 +5,7 @@ const {
   FIREBASE_BASE_64_SERVICE_ACCOUNT,
   AUTH_CLIENT_ID,
   AUTH_URL,
+  AUTH_TENANT_ID,
 } = process.env;
 const getServiceAccount = () => {
   try {
@@ -33,5 +34,6 @@ export const config = {
   azureConfig: {
     clientId: AUTH_CLIENT_ID,
     authUrl: AUTH_URL,
+    tenantId: AUTH_TENANT_ID,
   },
 };
